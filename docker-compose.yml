@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  nestjs-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${TCP_PORT:-3001}:${TCP_PORT:-3001}" # Map TCP port from .env or default
+      - "${GRPC_PORT:-5000}:${GRPC_PORT:-5000}" # Map gRPC port from .env or default
+      # Note: Redis and Kafka connections are typically client-initiated from the microservice
+      # to external services, so we don't expose ports for them on this container unless necessary.
+    volumes:
+      # Optional: Mount your source code for local development with hot-reloading
+      # This is less common in a production setup but can be useful for debugging.
+      # - .:/app
+      # Ignore node_modules and dist if mounting source code
+      # - /app/node_modules
+      # - /app/dist
+    restart: unless-stopped
